@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func createJsonFromCSV(data []string) (MeteorologicalData, error) {
+func createStructFromCSV(data []string) (MeteorologicalData, error) {
 	var md MeteorologicalData
 
 	data = strings.Fields(data[0])
@@ -16,7 +16,7 @@ func createJsonFromCSV(data []string) (MeteorologicalData, error) {
 	var err error
 	md.Timestamp, err = time.ParseInLocation("2006/01/02 15:04", fmt.Sprintf("%s/%s/%s %s:%s", data[0], data[1], data[2], data[3], data[4]), time.UTC)
 	if err != nil {
-		panic(err)
+		return MeteorologicalData{}, fmt.Errorf("error parsing time: %w", err)
 	}
 
 	for x, y := range data {

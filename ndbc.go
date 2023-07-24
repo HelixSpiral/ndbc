@@ -29,7 +29,7 @@ func (n *NDBC) GetPictureFromBuoy(id int) ([]byte, error) {
 func (n *NDBC) GetLatestDataFromBuoy(id int) (MeteorologicalData, error) {
 	resp, err := http.Get(fmt.Sprintf("https://www.ndbc.noaa.gov/data/realtime2/%d.txt", id))
 	if err != nil {
-		panic(err)
+		return MeteorologicalData{}, fmt.Errorf("error in http Get: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -37,12 +37,12 @@ func (n *NDBC) GetLatestDataFromBuoy(id int) (MeteorologicalData, error) {
 
 	records, err := csvReader.ReadAll()
 	if err != nil {
-		panic(err)
+		return MeteorologicalData{}, fmt.Errorf("error reading CSV records: %w", err)
 	}
 
-	md, err := createJsonFromCSV(records[3])
+	md, err := createStructFromCSV(records[3])
 	if err != nil {
-		panic(err)
+		return MeteorologicalData{}, fmt.Errorf("error creating struct: %w", err)
 	}
 
 	return md, nil
